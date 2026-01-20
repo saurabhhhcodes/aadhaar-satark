@@ -15,6 +15,7 @@ def train_isolation_forest():
     # Paths
     enrol_path = "data/master_enrolment.pkl"
     bio_path = "data/master_biometric.pkl"
+    demo_path = "data/master_demographic.pkl"  # Optional demographic dataset
     model_output = "models/isolation_forest.joblib"
     
     # Ensure directories exist
@@ -33,12 +34,21 @@ def train_isolation_forest():
     print(f"   Enrolment records: {len(enrol_df)}")
     print(f"   Biometric records: {len(bio_df)}")
     
+    # Load demographic data if available
+    demo_df = None
+    if os.path.exists(demo_path):
+        print(f"📂 Loading demographic dataset from {demo_path}...")
+        demo_df = pd.read_pickle(demo_path)
+        print(f"   Demographic records: {len(demo_df)}")
+    else:
+        print(f"ℹ️  Demographic dataset not found (optional): {demo_path}")
+    
     # Use process_data to get metrics (it handles all the merging and calculations)
     print("🔄 Processing data and calculating metrics...")
     from services.processing import process_data
     
     # Process data without a model (will train internally, but we'll extract features)
-    result = process_data(enrol_df, bio_df, demographic_data=None, model=None)
+    result = process_data(enrol_df, bio_df, demographic_data=demo_df, model=None)
     
     if not result or 'districts' not in result:
         print("❌ Data processing failed.")
@@ -65,6 +75,12 @@ def train_isolation_forest():
     
     print(f"   Training samples: {len(training_df)}")
     print(f"   Features: {list(training_df.columns)}")
+    
+    # Show feature statistics
+    print(f"   Feature ranges:")
+    print(f"     - pending_updates: {training_df['pending_updates'].min():.0f} to {training_df['pending_updates'].max():.0f}")
+    print(f"     - gap_percentage: {training_df['gap_percentage'].min():.1f}% to {training_df['gap_percentage'].max():.1f}%")
+    print(f"     - demo_updates: {training_df['demo_updates'].min():.0f} to {training_df['demo_updates'].max():.0f}")
     
     # Train Isolation Forest
     print("🤖 Training Isolation Forest (contamination=0.1)...")
@@ -94,4 +110,3 @@ if __name__ == "__main__":
         # The app will handle missing model gracefully
     else:
         print("🎉 Model training complete!")
-

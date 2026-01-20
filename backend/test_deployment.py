@@ -33,12 +33,20 @@ def test_datasets():
     
     enrol_path = "data/master_enrolment.pkl"
     bio_path = "data/master_biometric.pkl"
+    demo_path = "data/master_demographic.pkl"  # Optional
     
-    # Test 1: Files exist
+    # Test 1: Required files exist
     enrol_exists = os.path.exists(enrol_path)
     bio_exists = os.path.exists(bio_path)
     test_result("Master datasets exist", enrol_exists and bio_exists,
                 f"Enrolment: {enrol_exists}, Biometric: {bio_exists}")
+    
+    # Test 1b: Optional demographic dataset
+    demo_exists = os.path.exists(demo_path)
+    if demo_exists:
+        test_result("Demographic dataset found (optional)", True, demo_path)
+    else:
+        print(f"ℹ️  Demographic dataset not found (optional): {demo_path}")
     
     if not (enrol_exists and bio_exists):
         return
@@ -49,6 +57,12 @@ def test_datasets():
         bio_df = pd.read_pickle(bio_path)
         test_result("Datasets are readable", True,
                    f"Enrolment: {len(enrol_df)} rows, Biometric: {len(bio_df)} rows")
+        
+        # Test demographic if exists
+        if demo_exists:
+            demo_df = pd.read_pickle(demo_path)
+            test_result("Demographic dataset readable", True,
+                       f"Demographic: {len(demo_df)} rows")
         
         # Test 3: Required columns exist
         required_enrol_cols = ['state', 'district']
