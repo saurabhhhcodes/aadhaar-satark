@@ -1,90 +1,157 @@
 from fpdf import FPDF
 import os
 
+# Define Project Info
+PROJECT_ID = "UIDAI_11479"
+TEAM_NAME = "HackElite_Coders"
+PROJECT_TITLE = "Aadhaar Satark: Integrated Command & Control Center"
+REPO_URL = "https://github.com/saurabhhhcodes/aadhaar-satark"
+DEPLOY_URL = "https://aadhaar-satark.onrender.com"
+
 class PDF(FPDF):
     def header(self):
-        self.set_font('Arial', 'B', 15)
-        self.cell(80)
-        self.cell(30, 10, 'Aadhaar Satark - Official Submission', 0, 0, 'C')
-        self.ln(20)
+        self.set_font('Arial', 'B', 10)
+        self.cell(0, 10, f'{TEAM_NAME} | ID: {PROJECT_ID}', 0, 0, 'R')
+        self.ln(15)
 
     def footer(self):
         self.set_y(-15)
         self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, 'Team HackElite_Coders | Page ' + str(self.page_no()) + '/{nb}', 0, 0, 'C')
+        self.cell(0, 10, f'Page {self.page_no()}/{{nb}}', 0, 0, 'C')
 
-def create_enhanced_pdf():
+    def chapter_title(self, label):
+        self.set_font('Arial', 'B', 14)
+        self.set_fill_color(240, 240, 240)
+        self.cell(0, 10, label, 0, 1, 'L', 1)
+        self.ln(4)
+
+    def chapter_body(self, body):
+        self.set_font('Arial', '', 11)
+        self.multi_cell(0, 7, body)
+        self.ln()
+
+    def add_image_if_exists(self, path, w=170):
+        if os.path.exists(path):
+            self.image(path, x=10, w=w)
+            self.ln(5)
+        else:
+            self.set_font('Arial', 'I', 10)
+            self.cell(0, 10, f'[Image not found: {path}]', 0, 1)
+
+def create_final_pdf():
     pdf = PDF()
     pdf.alias_nb_pages()
     
-    # Page 1: Title & Abstract
+    # --- PAGE 1: TITLE & LINKS ---
     pdf.add_page()
     pdf.set_font('Arial', 'B', 24)
-    pdf.cell(0, 20, 'Project Submission Report', 0, 1, 'C')
+    pdf.cell(0, 20, PROJECT_TITLE, 0, 1, 'C')
+    pdf.ln(10)
     
     pdf.set_font('Arial', '', 12)
-    pdf.cell(0, 10, 'Project ID: UIDAI-HK-2026-X72', 0, 1, 'C')
-    pdf.cell(0, 10, 'Team Name: HackElite_Coders (Saurabh Kumar)', 0, 1, 'C')
-    pdf.ln(20)
+    pdf.cell(0, 10, f"Team Name: {TEAM_NAME}", 0, 1)
+    pdf.cell(0, 10, f"Team ID: {PROJECT_ID}", 0, 1)
     
-    pdf.set_font('Arial', 'B', 16)
-    pdf.cell(0, 10, '1. Executive Summary', 0, 1)
-    pdf.set_font('Arial', '', 12)
-    abstract = (
-        "Aadhaar Satark addresses the critical challenge of 'Last Mile Saturation'. "
-        "By combining Geospatial Analytics with Generative AI, we empower district officers "
-        "to identify micro-gaps and access policy knowledge instantly. "
-        "Our solution reduces analysis time by 99% and provides actionable, data-driven recommendations."
+    # Hyperlinks
+    pdf.set_text_color(0, 0, 255)
+    pdf.set_font('Arial', 'U', 12)
+    pdf.cell(0, 10, "Live Deployment (Render)", 0, 1, link=DEPLOY_URL)
+    pdf.cell(0, 10, "GitHub Repository (Source Code)", 0, 1, link=REPO_URL)
+    pdf.set_text_color(0, 0, 0)
+    pdf.ln(10)
+
+    # --- SECTION 1: PROBLEM STATEMENT AND APPROACH ---
+    pdf.chapter_title("1. Problem Statement and Approach")
+    pdf.chapter_body(
+        "Problem: Despite high Aadhaar generation, 'Last Mile Saturation' (Mandatory Biometric Updates for ages 5-18) "
+        "remains a challenge. District Nodal Officers lack real-time visibility into these micro-gaps due to data silos.\n\n"
+        "Approach: We built 'Aadhaar Satark', a Lakehouse-based Command Center. It ingests UIDAI datasets, "
+        "calculates saturation gaps using a custom 'Efficiency Index', and uses Geospatial Heatmaps for visualization. "
+        "A RAG-based AI Agent assists officers with policy queries, reducing decision latency."
     )
-    pdf.multi_cell(0, 10, abstract)
-    pdf.ln(10)
-    
-    # Feature 1: Dashboard
-    pdf.set_font('Arial', 'B', 14)
-    pdf.cell(0, 10, '2. Unified Command Dashboard', 0, 1)
-    if os.path.exists('assets/screenshots/dashboard.png'):
-        pdf.image('assets/screenshots/dashboard.png', x=10, w=190)
-    pdf.ln(10)
-    
-    # Page 2: Advanced Features
+
+    # --- SECTION 2: DATASETS USED ---
+    pdf.chapter_title("2. Datasets Used")
+    pdf.chapter_body(
+        "1. Aadhaar Enrolment Data (Static & API): Demographic breakdown (0-5, 5-18, >18).\n"
+        "2. Biometric Update Data: Mandatory biometric update statistics.\n"
+        "3. OGD India APIs: Real-time sync with Data.gov.in using API Key integration.\n"
+        "4. Geospatial Coordinates: Lat/Lng mapping for 700+ districts."
+    )
+
+    # --- SECTION 3: METHODOLOGY ---
+    pdf.chapter_title("3. Methodology")
+    pdf.chapter_body(
+        "A. Data Cleaning & Preprocessing:\n"
+        "- Normalization: Standardized district names (e.g., 'Coochbehar' -> 'Cooch Behar') using fuzzy matching dictionaries.\n"
+        "- Deduplication: 'Last-Write-Wins' policy based on (State, District, Date) composite keys.\n"
+        "- Conversion: Handled type casting for numeric columns sourced from JSON APIs.\n\n"
+        
+        "B. Analytical Engine:\n"
+        "- Gap Analysis: Calculated 'Pending Updates' = (Estimated Population 5-18) - (Actual Biometric Updates).\n"
+        "- Anomaly Detection: Implemented Isolation Forest (SciKit-Learn) to flag statistical outliers in update trends.\n\n"
+        
+        "C. AI Integration:\n"
+        "- RAG Pipeline: Vectorized UIDAI circulars into FAISS. The Gemini Pro LLM retrieves context to answer policy queries."
+    )
+
+    # --- SECTION 4: DATA ANALYSIS AND VISUALISATION ---
     pdf.add_page()
-    pdf.set_font('Arial', 'B', 14)
-    pdf.cell(0, 10, '3. Advanced Intelligence Features', 0, 1)
+    pdf.chapter_title("4. Data Analysis and Visualisation")
     
-    # Search
     pdf.set_font('Arial', 'B', 12)
-    pdf.cell(0, 10, 'A. AI-Powered Search & Insights', 0, 1)
-    if os.path.exists('assets/screenshots/search_demo.png'):
-        pdf.image('assets/screenshots/search_demo.png', x=10, w=170)
+    pdf.cell(0, 10, "Finding 1: High-Deficit Zones (Red)", 0, 1)
+    pdf.set_font('Arial', '', 11)
+    pdf.multi_cell(0, 7, 
+        "Our analysis revealed specific districts (e.g., Dima Hasao) with >50% update gaps. "
+        "The heatmap below highlights these critical zones."
+    )
+    pdf.add_image_if_exists('assets/screenshots/map_interaction.png')
+    
     pdf.ln(5)
-    
-    # Map
     pdf.set_font('Arial', 'B', 12)
-    pdf.cell(0, 10, 'B. Geospatial Heatmaps (Hover Interactions)', 0, 1)
-    if os.path.exists('assets/screenshots/map_interaction.png'):
-        pdf.image('assets/screenshots/map_interaction.png', x=10, w=170)
-    
-    # Page 3: Critical & Reporting
+    pdf.cell(0, 10, "Finding 2: AI-Driven Policy Support", 0, 1)
+    pdf.set_font('Arial', '', 11)
+    pdf.multi_cell(0, 7, "The AI Assistant correctly interprets 'update lag' penalties, replacing manual PDF searches.")
+    pdf.add_image_if_exists('assets/screenshots/search_demo.png')
+
     pdf.add_page()
-    pdf.set_font('Arial', 'B', 14)
-    pdf.cell(0, 10, '4. Critical Analysis & Reporting', 0, 1)
-    
-    # Critical
     pdf.set_font('Arial', 'B', 12)
-    pdf.cell(0, 10, 'A. Anomaly Detection (Red Zones)', 0, 1)
-    if os.path.exists('assets/screenshots/critical_status.png'):
-        pdf.image('assets/screenshots/critical_status.png', x=10, w=170)
+    pdf.cell(0, 10, "Dashboard Overview & Critical Flags", 0, 1)
+    pdf.add_image_if_exists('assets/screenshots/dashboard.png')
     pdf.ln(5)
+    pdf.add_image_if_exists('assets/screenshots/critical_status.png')
+
+    # --- SECTION 5: CODE FILES (EMBEDDED) ---
+    pdf.add_page()
+    pdf.chapter_title("5. Code Snippets (Core Logic)")
+    pdf.set_font('Courier', '', 8)
     
-    # Report
-    pdf.set_font('Arial', 'B', 12)
-    pdf.cell(0, 10, 'B. Automated PDF Generation', 0, 1)
-    if os.path.exists('assets/screenshots/report_action.png'):
-        pdf.image('assets/screenshots/report_action.png', x=10, w=170)
+    # Read backend/services/processing.py
+    try:
+        with open('backend/services/processing.py', 'r') as f:
+            code_content = f.read()
+            # Truncate if too long to save standard page limit, but mostly keep it
+            # We'll grab the first 300 lines or specific functions
+            lines = code_content.split('\n')
+            
+            pdf.cell(0, 5, "File: backend/services/processing.py (Data Processing & Anomaly Detection)", 0, 1)
+            pdf.ln(2)
+            
+            # Print Key Algorithm Functions
+            for line in lines:
+                # Basic filter to skip large maps for brevity if needed, but printing all is safer for strict rules
+                if len(pdf.pages) > 24: # Safety break
+                    pdf.cell(0, 5, "... (Code Truncated for PDF Limit) ...", 0, 1)
+                    break
+                pdf.cell(0, 4, line, 0, 1)
+                
+    except Exception as e:
+        pdf.cell(0, 10, f"Error reading code file: {str(e)}", 0, 1)
 
     # Output
     pdf.output("Aadhaar_Satark_Submission.pdf", 'F')
-    print("Enhanced PDF Generated Successfully!")
+    print("Final Strict PDF Generated Successfully!")
 
 if __name__ == '__main__':
-    create_enhanced_pdf()
+    create_final_pdf()
