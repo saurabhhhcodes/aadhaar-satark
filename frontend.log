@@ -18,3 +18,5 @@ nohup: ignoring input
  GET /favicon.ico 200 in 27ms
  GET / 200 in 339ms
  GET /favicon.ico 200 in 52ms
+ GET / 200 in 40ms
+ GET /favicon.ico 200 in 13ms
