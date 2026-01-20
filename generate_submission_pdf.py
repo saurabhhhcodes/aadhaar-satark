@@ -75,7 +75,7 @@ def create_final_pdf():
     pdf.chapter_body(
         "1. Aadhaar Enrolment Data (Static & API): Demographic breakdown (0-5, 5-18, >18).\n"
         "2. Biometric Update Data: Mandatory biometric update statistics.\n"
-        "3. OGD India APIs: Real-time sync with Data.gov.in using API Key integration.\n"
+        "3. OGD India APIs (Data.gov.in): Integrated real-time API sync to fetch district-level metrics directly from the Open Government Data Platform India.\n"
         "4. Geospatial Coordinates: Lat/Lng mapping for 700+ districts."
     )
 
@@ -122,9 +122,32 @@ def create_final_pdf():
     pdf.ln(5)
     pdf.add_image_if_exists('assets/screenshots/critical_status.png')
 
-    # --- SECTION 5: CODE FILES (EMBEDDED) ---
+    # --- SECTION 5: DETAILED DISTRICT ANALYSIS (NEW) ---
     pdf.add_page()
-    pdf.chapter_title("5. Code Snippets (Core Logic)")
+    pdf.chapter_title("5. Detailed District Analysis (Risk Clusters)")
+    
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(0, 10, "A. Critical Districts (>50% Gap)", 0, 1)
+    pdf.set_font('Arial', '', 11)
+    pdf.multi_cell(0, 7, "Districts requiring immediate intervention. The dashboard filters and highlights these 36 districts.")
+    # Use relative paths for portability in repo
+    pdf.add_image_if_exists('assets/screenshots/critical_view.png')
+    
+    pdf.ln(5)
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(0, 10, "B. Moderate Risk (20-50% Gap)", 0, 1)
+    pdf.multi_cell(0, 7, "Districts transitioning into danger zones. Early warning indicators are active.")
+    pdf.add_image_if_exists('assets/screenshots/moderate_view.png')
+
+    pdf.add_page()
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(0, 10, "C. Emerging Clusters (1-20% Gap)", 0, 1)
+    pdf.multi_cell(0, 7, "Districts with minor gaps. Auto-notifications sent to prevent backlog accumulation.")
+    pdf.add_image_if_exists('assets/screenshots/emerging_view.png')
+
+    # --- SECTION 6: CODE FILES (EMBEDDED) ---
+    pdf.add_page()
+    pdf.chapter_title("6. Code Snippets (Core Logic)")
     pdf.set_font('Courier', '', 8)
     
     # Read backend/services/processing.py
