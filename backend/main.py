@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
@@ -280,6 +281,15 @@ async def chat_endpoint(request: ChatRequest):
         return AGENT.query(request.query)
     return {"answer": "Agent is initializing, please wait..."}
 
+
+# Mount the static directory (exported from Next.js)
+# Check if ../frontend/out exists (Production/Render)
+static_dir = "../frontend/out"
+if os.path.isdir(static_dir):
+    app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
+
 if __name__ == "__main__":
     # Use port 8001 to avoid conflicts if 8000 is taken, or match user env
-    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)
+
+    # Use port 8001 to avoid conflicts if 8000 is taken, or match user env
+    uvicorn.run("main:app", host="0.0.0.0", port=int(os.getenv("PORT", 8001)))
