@@ -129,8 +129,12 @@ def create_final_pdf():
     
     # Read backend/services/processing.py
     try:
-        with open('backend/services/processing.py', 'r') as f:
+        with open('backend/services/processing.py', 'r', encoding='utf-8') as f:
             code_content = f.read()
+            # Normalize for FPDF (Latin-1 compatible)
+            # Replace common non-ascii chars or strip them
+            code_content = code_content.encode('latin-1', 'replace').decode('latin-1')
+            
             # Truncate if too long to save standard page limit, but mostly keep it
             # We'll grab the first 300 lines or specific functions
             lines = code_content.split('\n')
