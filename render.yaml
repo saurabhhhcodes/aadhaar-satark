@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: aadhaar-satark-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: DATA_GOV_API_KEY
+        sync: false
+
+  - type: web
+    name: aadhaar-satark-frontend
+    runtime: node
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: aadhaar-satark-backend
+          property: url

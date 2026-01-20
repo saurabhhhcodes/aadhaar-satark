@@ -1,0 +1,12 @@
+UIDAI CIRCULAR NO. 2026/01 - MANDATORY BIOMETRIC UPDATES
+
+1. REQUIREMENT: All residents attaining the age of 5 and 15 years must update their biometrics (Fingerprints, Iris, and Facial Photograph).
+2. TIMELINE: The update must be completed within 2 years of attaining the age (i.e., by age 7 and 17).
+3. PENALTY: Failure to update may lead to Deactivation of Aadhaar or exclusion from Direct Benefit Transfer (DBT) schemes.
+4. INFRASTRUCTURE: Districts with >10,000 pending updates must deploy Mobile Enrolment Units (MEUs) to schools.
+5. EXCEPTION: Bedridden or disabled residents are eligible for Home Enrolment Services via the Regional Office.
+6. DATA SYNC: All Registrars must sync their packet data with the CIDR (Central Identities Data Repository) every 24 hours.
+7. COMPLIANCE: A 'Critical' status is assigned to any district where the backlog exceeds 50% of the target population.
+8. FUNDING: Special incentives of ₹100 per successful mandatory update are provided to Enrolment Agencies in 'Aspirational Districts'.
+9. DOCUMENTATION: No additional documents are required for Mandatory Biometric Updates (MBU) if the child's name and DoB remain unchanged.
+10. GRIEVANCE: Residents can lodge complaints via 1947 or help@uidai.gov.in regarding service denial.

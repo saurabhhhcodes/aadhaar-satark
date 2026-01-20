@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pandas
+scikit-learn
+python-multipart
+python-dotenv
+requests
+fpdf
+joblib
+matplotlib
+seaborn
