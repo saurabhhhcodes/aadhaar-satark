@@ -60,27 +60,30 @@ export function Dashboard({ data, onDataProcessed }: DashboardProps) {
         }
     }, []);
 
-    if (!data || !data.districts || !Array.isArray(data.districts)) {
-        // Fallback if data load failed or empty
-        return (
-            <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-                <div className="text-center">
-                    <h2 className="text-2xl font-bold text-slate-900">System Ready</h2>
-                    <p className="mt-2 text-slate-600">No initial data found. Please upload manually or sync with official portal.</p>
-                </div>
-                <FileUpload onDataProcessed={onDataProcessed} />
-            </div>
-        );
+    // Safe Data Access (Fallback to empty structure to avoid blocking UI)
+    const displayData = (data && data.districts && Array.isArray(data.districts)) ? data : {
+        summary: { total_pending_updates: 0, critical_districts_count: 0, processed_districts: 0 },
+        districts: [],
+        processing_time_ms: 0,
+        dataset_info: { source: "waiting_for_data" }
+    };
+
+    // Warn if empty but render anyway
+    if (!data || !data.districts) {
+        // Optional: Trigger auto-open upload modal if strictly needed, 
+        // but user asked to remove blocking screen.
+        // We can show a toast or banner instead.
     }
 
+
     // Extract unique states
-    const states = ['All', ...Array.from(new Set(data.districts.map(d => d.state))).sort()];
+    const states = ['All', ...Array.from(new Set(displayData.districts.map((d: any) => d.state))).sort()];
 
     // Filtering State (Expanded to include Emerging/Compliant)
     const [statusFilter, setStatusFilter] = React.useState<'ALL' | 'CRITICAL' | 'MODERATE' | 'EMERGING' | 'COMPLIANT'>('ALL');
 
     // Filter Data
-    const filteredDistricts = data.districts.filter(d => {
+    const filteredDistricts = displayData.districts.filter((d: any) => {
         const matchesState = selectedState === 'All' || d.state === selectedState;
 
         let matchesStatus = true;
@@ -170,9 +173,9 @@ export function Dashboard({ data, onDataProcessed }: DashboardProps) {
                             </div>
                             <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider flex items-center gap-2">
                                 Strategic Dashboard
-                                {data.processing_time_ms && (
+                                {displayData.processing_time_ms && (
                                     <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-[10px] font-bold border border-green-200 animate-pulse">
-                                        ⚡ {data.processing_time_ms}ms Real-Time
+                                        ⚡ {displayData.processing_time_ms}ms Real-Time
                                     </span>
                                 )}
                             </p>
@@ -220,7 +223,7 @@ export function Dashboard({ data, onDataProcessed }: DashboardProps) {
                     <div onClick={() => setStatusFilter('ALL')} className={`cursor-pointer transition-transform hover:scale-[1.02] ${statusFilter === 'ALL' ? 'ring-2 ring-blue-400 ring-offset-2 rounded-xl' : ''}`}>
                         <StatCard
                             label="Total Pending Updates"
-                            value={data.summary.total_pending_updates.toLocaleString()}
+                            value={displayData.summary.total_pending_updates.toLocaleString()}
                             subtext="National Deficit"
                             icon={Users}
                             color="blue"
@@ -229,7 +232,7 @@ export function Dashboard({ data, onDataProcessed }: DashboardProps) {
                     <div onClick={() => setStatusFilter(statusFilter === 'CRITICAL' ? 'ALL' : 'CRITICAL')} className={`cursor-pointer transition-transform hover:scale-[1.02] ${statusFilter === 'CRITICAL' ? 'ring-2 ring-red-400 ring-offset-2 rounded-xl' : ''}`}>
                         <StatCard
                             label="Critical Districts"
-                            value={data.summary.critical_districts_count}
+                            value={displayData.summary.critical_districts_count}
                             subtext=">50% Gap (Action Needed)"
                             icon={AlertOctagon}
                             color="red"
@@ -238,7 +241,7 @@ export function Dashboard({ data, onDataProcessed }: DashboardProps) {
                     <div onClick={() => setStatusFilter(statusFilter === 'MODERATE' ? 'ALL' : 'MODERATE')} className={`cursor-pointer transition-transform hover:scale-[1.02] ${statusFilter === 'MODERATE' ? 'ring-2 ring-orange-400 ring-offset-2 rounded-xl' : ''}`}>
                         <StatCard
                             label="Moderate Risk"
-                            value={data.districts.filter(d => d.status === 'MODERATE').length}
+                            value={displayData.districts.filter((d: any) => d.status === 'MODERATE').length}
                             subtext="20-50% Gap"
                             icon={Activity}
                             color="orange"
@@ -248,7 +251,7 @@ export function Dashboard({ data, onDataProcessed }: DashboardProps) {
                     <div onClick={() => setStatusFilter(statusFilter === 'EMERGING' ? 'ALL' : 'EMERGING')} className={`cursor-pointer transition-transform hover:scale-[1.02] ${statusFilter === 'EMERGING' ? 'ring-2 ring-yellow-400 ring-offset-2 rounded-xl' : ''}`}>
                         <StatCard
                             label="Emerging"
-                            value={data.districts.filter(d => d.status === 'SAFE' && d.gap_percentage > 0).length}
+                            value={displayData.districts.filter((d: any) => d.status === 'SAFE' && d.gap_percentage > 0).length}
                             subtext="1-20% Gap"
                             icon={TrendingUp}
                             color="yellow"
@@ -258,7 +261,7 @@ export function Dashboard({ data, onDataProcessed }: DashboardProps) {
                     <div onClick={() => setStatusFilter('COMPLIANT')} className={`cursor-pointer transition-transform hover:scale-[1.02] ${statusFilter === 'COMPLIANT' ? 'ring-2 ring-emerald-400 ring-offset-2 rounded-xl' : ''}`}>
                         <StatCard
                             label="Compliant"
-                            value={data.districts.filter(d => d.status === 'SAFE' && d.gap_percentage === 0).length}
+                            value={displayData.districts.filter((d: any) => d.status === 'SAFE' && d.gap_percentage === 0).length}
                             subtext="0% Gap (Perfect)"
                             icon={CheckCircle}
                             color="emerald"
@@ -271,7 +274,7 @@ export function Dashboard({ data, onDataProcessed }: DashboardProps) {
                     {/* Map: Hero Section */}
                     <div className="lg:col-span-2">
                         <MapVisualizer
-                            districts={data.districts}
+                            districts={displayData.districts}
                             selectedState={selectedState}
                             onDistrictClick={(state) => setSelectedState(state)}
                         />
