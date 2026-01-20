@@ -1,61 +1,64 @@
 # Aadhaar Satark: Strategic Dashboard & Analytics 🇮🇳
 
-![Aadhaar Satark Banner](assets/screenshots/dashboard.png)
+> **Team**: HackElite_Coders  
+> **Theme**: Data Analytics & AI  
+> **Award-Winning Solution for Intelligent Governance**
 
-> **Award-Winning Solution for Team: HackElite_Coders**  
-> *Empowering UIDAI with Geospatial Intelligence & Satark AI Agents*
+![Dashboard Banner](assets/screenshots/dashboard.png)
 
-## 🚀 Impact & Vision
-**Aadhaar Satark** addresses the critical challenge of **Enrolment Gaps** in Uttar Pradesh. By leveraging **Isolation Forest Anomaly Detection**, **Geospatial Mapping**, and a **RAG-Powered AI Agent**, we provide actionable intelligence to district nodal officers.
+## 🌟 Executive Summary
+**Aadhaar Satark** (Vigilant Aadhaar) is a Unified Command Center designed for **UIDAI Nodal Officers**. It transforms static Enrolment & Update datasets into **Geospatial Intelligence** and **Predictive Insights**.
 
-**Key Achievement**: We reduced analysis time from **3 days to 3 seconds** using our automated pipeline.
+Our system addresses the "Last Mile" problem in update saturation by identifying micro-gaps at the district level and providing AI-driven policy guidance.
 
-## ✨ Key Features
+## 🚀 Key Features
 
-### 1. 🗺️ Geospatial Intelligence Hub
-Visualize live enrolment deficits across 75+ districts. Interactive maps highlight critical zones requiring immediate Mobile Unit intervention.
-*(See Dashboard Screenshot above)*
+### 1. 🔍 Intelligent Search & AI Guidance
+Why manually filter tables? Just ask our **Satark AI Agent**.
+- *Query*: "Show me stats for Varanasi"
+- *Insight*: The AI analyzes real-time data and cross-references it with UIDAI guidelines.
+![Search Demo](assets/screenshots/search_demo.png)
 
-### 2. 🤖 Satark AI Agent (RAG)
-Stop searching through PDFs. Just ask: *"Why is Lucknow lagging?"* or *"What is the penalty for biometric delays?"*.
-Our agent was trained on **3 Official UIDAI Circulars** and **Live Dataset Metrics**.
+### 2. 🚨 Critical Gap Identification
+We auto-flag districts falling below the national average.
+- **Red Zone**: >30% Update Gap
+- **Action Plan**: Automated resource allocation suggestions (Mobile Units vs Permanent Centers).
+![Critical Status](assets/screenshots/critical_status.png)
 
-![AI Agent Interaction](assets/screenshots/chat.png)
+### 3. 🗺️ Geospatial Exploration
+Interactive heatmaps allow officers to visualize density and coverage instantly.
+- **Hover Insights**: Immediate access to key KPIs (Penetration %, Update Lag).
+![Map Interaction](assets/screenshots/map_interaction.png)
 
-### 3. 📊 Predictive Resource Planning
-Our system doesn't just show problems; it suggests solutions.
-- **"Deploy 12 Kits"** to Varanasi to clear backlog.
-- **"Flagged Anomaly"** in Gorakhpur (Unknown Age Groups > 15%).
+### 4. 📄 Automated Strategic Reports
+Generate official PDF reports for district meetings with one click.
+- **Content**: AI Executive Summary, Anomaly Detection Graphs, and signatures.
+![Report Action](assets/screenshots/report_action.png)
 
-## 🛠️ Tech Stack
-- **Frontend**: Next.js 14, TailwindCSS, Recharts, React-Simple-Maps
-- **Backend**: Python 3.10, FastAPI, Pandas, Scikit-Learn (Isolation Forest)
-- **AI/LLM**: Google Gemini (via LangChain), RAG (FAISS/ChromaDB)
-- **Deployment**: Render (Single Service Monorepo)
+## 🛠️ Technology Stack
+| Layer | Tech | Utility |
+| :--- | :--- | :--- |
+| **Frontend** | Next.js 14, React | Fast, Interactive Dashboard |
+| **Vis** | Recharts, D3.js | Data Storytelling |
+| **Backend** | FastAPI (Python) | High-performance API |
+| **Logic** | Pandas, Scikit-learn | Anomaly Detection Model |
+| **AI/LLM** | RAG (LangChain) | Context-aware Policy Assistant |
+| **Deploy** | Render (Docker) | Scalable Cloud Infrastructure |
 
-## 🚀 Deployment Guide
-This project is live!
+## 🚀 Getting Started
 
-### Option 1: Live Demo
-[Link to your Render App]
+### Live Deployment
+[**Click Here to Open App**](https://aadhaar-satark.onrender.com)
 
-### Option 2: Local Setup
+### Local Development
 ```bash
-# 1. Clone Repo
+# Clone the repo
 git clone https://github.com/saurabhhhcodes/aadhaar-satark.git
 
-# 2. Run Backend (Port 8001)
-cd backend
-pip install -r requirements.txt
-python -m uvicorn main:app --host 0.0.0.0 --port 8001
-
-# 3. Run Frontend (Port 3000)
-cd frontend
-npm install
-npm run dev
+# Run with Docker (Recommended)
+docker build -t aadhaar-satark .
+docker run -p 8000:8000 aadhaar-satark
 ```
 
-## 📄 Submission Details
-- **Team**: HackElite_Coders
-- **Theme**: Data Analytics & AI
-- **License**: MIT
+## 📜 License
+MIT License. Built for UIDAI Hackathon 2026.
